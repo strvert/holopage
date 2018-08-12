@@ -14,13 +14,7 @@ with open(argv[1], 'rb') as inf:
 binary_str = binary.decode()
 
 with open(argv[2], 'wb') as outf:
-    count = 0
     for i in range(int(len(binary_str) / 8)):
-        print(hex(int(binary_str[:8], 2)) ,end="")
+        # print(hex(int(binary_str[:8], 2)) ,end="")
         outf.write(struct.pack("B", int(binary_str[:8], 2)))
         binary_str = binary_str[8:]
-        count += 1
-        if count % 6 == 0:
-            print('')
-        else:
-            print(' ')
