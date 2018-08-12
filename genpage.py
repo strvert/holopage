@@ -1,20 +1,18 @@
 import sys
 import numpy as np
 import math
-from PIL import image
+from PIL import Image
 
 np.set_printoptions(edgeitems=10)
 
 argv = sys.argv
 argc = len(argv)
 
-# if argc < 2:
-#     print("利用方法: python rebin.py [inputfile] [outputfile]")
-#     quit()
+if argc == 4:
+    pix = int(argv[3])
+else:
+    pix = 1024
 
-argv.append("./stn.bin")
-
-pix = 1024
 binary = ''
 with open(argv[1], 'rb') as inf:
     binary = inf.readline()
@@ -37,6 +35,8 @@ print("保存データビット:{}".format(data_bits))
 print("保存データバイト:{}".format(data_bytes))
 print("余剰ビット:{}".format(over_bits))
 print("余剰バイト:{}".format(over_bytes))
+print()
+print("生成開始")
 
 for i in range(over_bytes):
     if i % 2 == 0:
@@ -55,15 +55,17 @@ for page in range(page_num):
     for py in range(int(pix / 2)):
         for px in range(int(pix / 2)):
             pix_point = px
-            print(binary_str[count*2:(count*2)+2])
+            # print(binary_str[count*2:(count*2)+2])
             if binary_str[count*2:(count*2)+2] == '00':
-                page_arrays[page][py*2][px*2+1] = 1
+                page_arrays[page][py*2][px*2+1] = 255
             elif binary_str[count*2:(count*2)+2] == '01':
-                page_arrays[page][py*2][px*2] = 1
+                page_arrays[page][py*2][px*2] = 255
             elif binary_str[count*2:(count*2)+2] == '10':
-                page_arrays[page][py*2+1][px*2+1] = 1
+                page_arrays[page][py*2+1][px*2+1] = 255
             elif binary_str[count*2:(count*2)+2] == '11':
-                page_arrays[page][py*2+1][px*2] = 1
+                page_arrays[page][py*2+1][px*2] = 255
             count += 1
 
-print(page_arrays)
+for page in range(page_num):
+    Image.fromarray(page_arrays[page]).convert("L").save("{0}{1}.png".format(argv[2], page))
+
